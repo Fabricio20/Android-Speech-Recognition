@@ -9,4 +9,8 @@
     <string name="error_no_input">No speech input detected</string>
     <string name="error_server">SpeechRecognition server error. Try again in few minutes</string>
     <string name="error_undefined">Undefined error</string>
+    <string name="error_language">Language not supported</string>
+    <string name="error_language_unavailable">Language unavailable</string>
+    <string name="error_too_many_requests">Too many requests</string>
+    <string name="error_server_disconnected">SpeechRecognition server disconnected</string>
 </resources>

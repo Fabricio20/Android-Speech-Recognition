@@ -14,39 +14,43 @@ import java.util.ArrayList;
 
 final class SpeechRecognitionListener implements RecognitionListener {
 
-    private OnSpeechRecognitionListener onSpeechRecognitionListener;
-    private Context context;
+    private final OnSpeechRecognitionListener listener;
+    private final Context context;
 
-    SpeechRecognitionListener(OnSpeechRecognitionListener onSpeechRecognizerListener, Context context){
-        this.onSpeechRecognitionListener = onSpeechRecognizerListener;
+    SpeechRecognitionListener(OnSpeechRecognitionListener listener, Context context) {
+        this.listener = listener;
         this.context = context;
     }
 
-    OnSpeechRecognitionListener getOnSpeechRecognitionListener(){
-        return onSpeechRecognitionListener;
+    OnSpeechRecognitionListener getOnSpeechRecognitionListener() {
+        return listener;
     }
 
     @Override
-    public void onReadyForSpeech(Bundle bundle) {}
+    public void onReadyForSpeech(Bundle bundle) {
+    }
 
     @Override
-    public void onBeginningOfSpeech() {}
+    public void onBeginningOfSpeech() {
+    }
 
     @Override
-    public void onRmsChanged(float v) {}
+    public void onRmsChanged(float v) {
+    }
 
     @Override
-    public void onBufferReceived(byte[] bytes) {}
+    public void onBufferReceived(byte[] bytes) {
+        this.listener.OnBufferReceived(bytes);
+    }
 
     @Override
-    public void onEndOfSpeech() {}
+    public void onEndOfSpeech() {
+    }
 
     @Override
     public void onError(int i) {
-
-        String errorMessage = "";
+        String errorMessage;
         int errorCode = -1;
-
         switch (i) {
             case SpeechRecognizer.ERROR_AUDIO:
                 errorCode = SpeechRecognizer.ERROR_AUDIO;
@@ -93,43 +97,61 @@ final class SpeechRecognitionListener implements RecognitionListener {
                 errorMessage = context.getString(R.string.error_no_input);
                 break;
 
+            case SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED:
+                errorCode = SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED;
+                errorMessage = context.getString(R.string.error_language);
+                break;
+
+            case SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE:
+                errorCode = SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE;
+                errorMessage = context.getString(R.string.error_language_unavailable);
+                break;
+
+            case SpeechRecognizer.ERROR_SERVER_DISCONNECTED:
+                errorCode = SpeechRecognizer.ERROR_TOO_MANY_REQUESTS;
+                errorMessage = context.getString(R.string.error_server_disconnected);
+                break;
+
+            case SpeechRecognizer.ERROR_TOO_MANY_REQUESTS:
+                errorCode = SpeechRecognizer.ERROR_TOO_MANY_REQUESTS;
+                errorMessage = context.getString(R.string.error_too_many_requests);
+                break;
+
             default:
                 errorMessage = context.getString(R.string.error_undefined);
                 break;
         }
-
-        onSpeechRecognitionListener.OnSpeechRecognitionError(errorCode, errorMessage);
+        listener.OnSpeechRecognitionError(errorCode, errorMessage);
     }
 
     @Override
     public void onResults(Bundle bundle) {
-
         //sentence with highest confidence score is in position 0
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-
-        if(matches != null && matches.size() > 0){
+        if (matches != null && matches.size() > 0) {
             String sentence = matches.get(0);
-
             Log.i(SpeechRecognitionListener.class.getSimpleName(), sentence);
-            onSpeechRecognitionListener.OnSpeechRecognitionFinalResult(sentence);
-
-        }else onError(SpeechRecognizer.ERROR_NO_MATCH);
+            listener.OnSpeechRecognitionFinalResult(sentence);
+        } else {
+            onError(SpeechRecognizer.ERROR_NO_MATCH);
+        }
     }
 
     @Override
     public void onPartialResults(Bundle bundle) {
         //sentence with highest confidence score is in position 0
         ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-
-        if(matches != null && matches.size() > 0){
+        if (matches != null && matches.size() > 0) {
             String word = matches.get(0);
-
             Log.i(SpeechRecognitionListener.class.getSimpleName(), word);
-            onSpeechRecognitionListener.OnSpeechRecognitionCurrentResult(word);
-
-        }else onError(SpeechRecognizer.ERROR_NO_MATCH);
+            listener.OnSpeechRecognitionCurrentResult(word);
+        } else {
+            onError(SpeechRecognizer.ERROR_NO_MATCH);
+        }
     }
 
     @Override
-    public void onEvent(int i, Bundle bundle) {}
+    public void onEvent(int i, Bundle bundle) {
+    }
+
 }

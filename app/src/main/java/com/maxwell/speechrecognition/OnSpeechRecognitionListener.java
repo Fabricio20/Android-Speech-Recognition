@@ -47,10 +47,20 @@ public interface OnSpeechRecognitionListener {
      * that occurred
      *
      * @param errorCode An integer that indicates the error category.
-     *                 (Static defined in {@link android.speech.SpeechRecognizer})
+     *                  (Static defined in {@link android.speech.SpeechRecognizer})
      *                  errorCode cannot be 0. A value less than zero (i.e -1) indicates an
      *                  undefined error.
-     * @param errorMsg The description of the error
+     * @param errorMsg  The description of the error
      */
     void OnSpeechRecognitionError(int errorCode, String errorMsg);
+
+    /**
+     * More sound has been received. The purpose of this function is to allow giving feedback to
+     * the user regarding the captured audio. There is no guarantee that this method will be called.
+     *
+     * @param bytes A buffer containing a sequence of big-endian 16-bit integers representing a
+     *              single channel audio stream. The sample rate is implementation dependent.
+     */
+    void OnBufferReceived(byte[] bytes);
+
 }
